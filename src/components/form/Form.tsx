@@ -5,14 +5,30 @@ type FormProps = {
 	description?: string;
 	inputs: Input[];
 	onSubmit?: () => void;
+	onNext?: () => void;
+	onBack?: () => void;
+	currentStep: number;
+	steps: number;
 };
 
-const Form = ({ title, description = "", inputs, onSubmit }: FormProps) => {
+const Form = ({ title, description = "", inputs, onSubmit, onNext, onBack, currentStep, steps }: FormProps) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (onSubmit) {
       onSubmit();
+    }
+  }
+
+	const goBack = () => {
+    if (onBack) {
+      onBack();
+    }
+  }
+
+	const goNext = () => {
+    if (onNext) {
+      onNext();
     }
   }
 	return (
@@ -32,9 +48,9 @@ const Form = ({ title, description = "", inputs, onSubmit }: FormProps) => {
 				/>
 			))}
 			<div className="flex justify-center">
-				<input type="submit" value="Next" className="bg-app-orange text-white font-mono text-sm px-1 py-3 mx-1 my-3 w-24"/>
-				<input type="submit" value="Next" className="bg-app-orange text-white font-mono text-sm px-1 py-3 mx-1 my-3 w-24"/>
-				<input type="submit" value="Next" className="bg-app-orange text-white font-mono text-sm px-1 py-3 mx-1 my-3 w-24"/>
+				{currentStep !== 0 && <input type="button" onClick={goBack} value="Previous" className="bg-app-orange text-white font-mono text-sm px-1 py-3 mx-1 my-3 w-24"/>}
+				{currentStep !== steps - 1 && <input type="button" onClick={goNext} value="Next" className="bg-app-orange text-white font-mono text-sm px-1 py-3 mx-1 my-3 w-24"/>}
+				{currentStep === steps - 1 && <input type="submit" value="Submit" className="bg-app-orange text-white font-mono text-sm px-1 py-3 mx-1 my-3 w-24"/>}
 			</div>
 		</form>
 	);
