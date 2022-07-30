@@ -24,10 +24,6 @@ const variants = {
 	},
 };
 
-const swipeConfidenceThreshold = 10000;
-const swipePower = (offset: number, velocity: number) => {
-	return Math.abs(offset) * velocity;
-};
 
 const App = () => {
 	const [currentStep, setCurrentStep] = useState<number>(0);
@@ -108,66 +104,59 @@ const App = () => {
 
 	const paginate = (newDirection: number) => {
 		setPage([page + newDirection, newDirection]);
-		setCurrentStep(currentStep + 1);
+		if(currentStep + newDirection < 0) {
+			setCurrentStep(steps.length - 1);
+		}else if(currentStep + newDirection > steps.length - 1) {
+			setCurrentStep(0);
+		}else{
+			setCurrentStep(currentStep + newDirection);
+		}
 	};
 
 	return (
-		// <div className="bg-app-bg h-screen flex flex-col items-center">
-		// 	<ProgressStep steps={steps} />
-		// 	{steps.map(
-		// 		(step, index) =>
-		// 			currentStep === index && (
-		// 				<Form
-		// 					title={step.title}
-		// 					description={step.description}
-		// 					inputs={step.inputs}
-		// 					key={index}
-		// 					onNext={() => setCurrentStep(currentStep + 1)}
-		// 					onBack={() => setCurrentStep(currentStep - 1)}
-		// 					currentStep={currentStep}
-		// 					steps={steps.length}
-		// 				/>
-		// 			)
-		// 	)}
-		// </div>
 		<div className="bg-app-bg h-screen flex flex-col items-center">
+			<ProgressStep steps={steps} currentStep={currentStep}/>
 			<AnimatePresence>
+				<div className="bg-red-300">
+					<motion.div
+						key={page}
+						custom={direction}
+						variants={variants}
+						initial="enter"
+						animate="center"
+						exit="exit"
+						transition={{
+							x: { type: "spring", stiffness: 300, damping: 30 },
+							opacity: { duration: 0.2 },
+						}}
+					>
+						<Form
+							title={steps[currentStep].title}
+							description={steps[currentStep].description}
+							inputs={steps[currentStep].inputs}
+							onNext={() => paginate(1)}
+							onBack={() => paginate(-1)}
+							currentStep={currentStep}
+							steps={steps.length}
+						/>
+					</motion.div>
+				</div>
 				{/* <motion.div
-					key={page}
-					custom={direction}
-					variants={variants}
-					initial="enter"
-					animate="center"
-					exit="exit"
-					transition={{
-						x: { type: "spring", stiffness: 300, damping: 30 },
-						opacity: { duration: 0.2 },
+					animate={{
+						x: 0,
+						backgroundColor: "#000",
+						boxShadow: "10px 10px 0 rgba(0, 0, 0, 0.2)",
+						position: "fixed",
+						transitionEnd: {
+							// display: "none",
+						},
 					}}
-					drag="x"
-					dragConstraints={{ left: 0, right: 0 }}
-					dragElastic={1}
-					onDragEnd={(e, { offset, velocity }) => {
-						const swipe = swipePower(offset.x, velocity.x);
-
-						if (swipe < -swipeConfidenceThreshold) {
-							paginate(1);
-						} else if (swipe > swipeConfidenceThreshold) {
-							paginate(-1);
-						}
-					}}
+					transition={{ duration: 2 }}
 				>
 					<div className="bg-red-500 h-96 w-96 grid place-items-center">
 						{currentStep + 1}
 					</div>
 				</motion.div> */}
-				<motion.div
-					animate={{ x: 100}}
-					transition={{duration: 2}}
-				>
-					<div className="bg-red-500 h-96 w-96 grid place-items-center">
-						{currentStep + 1}
-					</div>
-				</motion.div>
 			</AnimatePresence>
 		</div>
 	);
