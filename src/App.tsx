@@ -117,7 +117,7 @@ const App = () => {
 		<div className="bg-app-bg h-screen flex flex-col items-center">
 			<ProgressStep steps={steps} currentStep={currentStep}/>
 			<AnimatePresence>
-				<div className="bg-red-300">
+				<div>
 					<motion.div
 						key={page}
 						custom={direction}
