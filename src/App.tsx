@@ -141,22 +141,6 @@ const App = () => {
 						/>
 					</motion.div>
 				</div>
-				{/* <motion.div
-					animate={{
-						x: 0,
-						backgroundColor: "#000",
-						boxShadow: "10px 10px 0 rgba(0, 0, 0, 0.2)",
-						position: "fixed",
-						transitionEnd: {
-							// display: "none",
-						},
-					}}
-					transition={{ duration: 2 }}
-				>
-					<div className="bg-red-500 h-96 w-96 grid place-items-center">
-						{currentStep + 1}
-					</div>
-				</motion.div> */}
 			</AnimatePresence>
 		</div>
 	);

@@ -15,7 +15,7 @@ const ProgressStep = ({ steps, currentStep }: ProgressProps) => {
 					} before:contdent-['${steps.length}'] ${
 						index ? "before:content-['" + JSON.stringify(index) + "']" : null
 					} before:text-white before:flex before:justify-center before:block before:mx-auto before:mt-0 before:mb-1 before:z-10 after:w-full after:h-[2px] after:bg-app-green after:${
-						currentStep >= index ? "bg-app-orange" : null
+						currentStep < index - 1 ? "bg-app-orange" : null
 					} after:absolute after:-left-1/2 after:top-2 after:z-0 first:after:content-none`}
 					key={index}
 				>

@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Oval } from "react-loader-spinner";
+import { motion } from "framer-motion";
 
 type FormProps = {
 	title: string;
@@ -11,6 +13,21 @@ type FormProps = {
 	steps: number;
 };
 
+const draw = {
+	hidden: { pathLength: 0, opacity: 0 },
+	visible: () => {
+		const delay = 1 * 0.5;
+		return {
+			pathLength: 1,
+			opacity: 1,
+			transition: {
+				pathLength: { delay, type: "spring", duration: 1.5, bounce: 0 },
+				opacity: { delay, duration: 0.01 },
+			},
+		};
+	},
+};
+
 const Form = ({
 	title,
 	description = "",
@@ -21,29 +38,32 @@ const Form = ({
 	currentStep,
 	steps,
 }: FormProps) => {
-	const [loading, setLoading] = useState<Boolean>(true);
+	const [loading, setLoading] = useState<Boolean>(false);
+	const [success, setSuccess] = useState<Boolean>(false);
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		if (onSubmit) {
-			// onSubmit();
-			alert("I was submitted");
+		if (currentStep === steps - 1) {
 			setLoading(true);
 			setTimeout(() => {
-				setLoading(false);
-			}, 5000);
+				handleSuccess();
+			}, 3000);
+		} else {
+			onNext && onNext();
 		}
+	};
+
+	const handleSuccess = () => {
+		setSuccess(true);
+		setTimeout(() => {
+			setSuccess(false);
+			setLoading(false);
+		}, 3000);
 	};
 
 	const goBack = () => {
 		if (onBack) {
 			onBack();
-		}
-	};
-
-	const goNext = () => {
-		if (onNext) {
-			onNext();
 		}
 	};
 	return (
@@ -75,28 +95,70 @@ const Form = ({
 								type="button"
 								onClick={goBack}
 								value="Previous"
-								className="bg-app-orange text-white font-mono text-sm px-1 py-3 mx-1 my-3 w-24"
+								className="bg-app-orange text-white font-mono text-sm px-1 py-3 mx-1 my-3 w-24 cursor-pointer"
 							/>
 						)}
 						{currentStep !== steps - 1 && (
 							<input
 								type="submit"
-								onClick={goNext}
 								value="Next"
-								className="bg-app-orange text-white font-mono text-sm px-1 py-3 mx-1 my-3 w-24"
+								className="bg-app-orange text-white font-mono text-sm px-1 py-3 mx-1 my-3 w-24 cursor-pointer"
 							/>
 						)}
 						{currentStep === steps - 1 && (
 							<input
 								type="submit"
 								value="Submit"
-								className="bg-app-orange text-white font-mono text-sm px-1 py-3 mx-1 my-3 w-24"
+								className="bg-app-orange text-white font-mono text-sm px-1 py-3 mx-1 my-3 w-24 cursor-pointer"
 							/>
 						)}
 					</div>
 				</form>
 			) : (
-				<svg className="animate-spin h- w-5 mr-3 ..." viewBox="0 0 24 24"></svg>
+				<>
+					<div className="bg-white w-[400px] flex flex-col items-center h-[400px]">
+						{!success ? (
+							<Oval
+								height="150"
+								width="150"
+								color="#ff9a76"
+								ariaLabel="oval-loading"
+								secondaryColor="#679b9b"
+								strokeWidth={2}
+								wrapperClass={
+									"w-[400px] h-[400px] bg-white flex justify-center items-center rounded shadow-form-shadow px-7 py-5"
+								}
+								strokeWidthSecondary={2}
+							/>
+						) : (
+							<motion.svg
+								width="400"
+								height="400"
+								viewBox="0 0 400 400"
+								initial="hidden"
+								animate="visible"
+							>
+								<motion.circle
+									cx="200"
+									cy="200"
+									r="75"
+									stroke="#ff9a76"
+									variants={draw}
+									fill="none"
+									strokeWidth="7.5"
+								/>
+								<motion.path
+									fill="none"
+									strokeWidth="7.5"
+									stroke="#ff9a76"
+									d="M 155,205 L 180,235 L 245,180"
+									strokeDasharray="0 1"
+									variants={draw}
+								/>
+							</motion.svg>
+						)}
+					</div>
+				</>
 			)}
 		</>
 	);
